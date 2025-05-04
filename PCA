@@ -1,0 +1,24 @@
+import pandas as pd
+
+df = pd.read_csv("iris.csv")
+
+X = df.values[:,:-1]
+Y = df.values[:,-1]
+
+X_standard = X - X.mean()
+
+import numpy as np
+cov_matrix = np.cov(X_standard.T)
+
+eigen_values, eigen_vectors = np.linalg.eig(cov_matrix)
+
+X_pca = X_standard @ eigen_vectors
+
+import matplotlib.pyplot as plt
+
+plt.scatter(X_pca[:,0], X_pca[:,1], c=Y)
+plt.xlabel("First Principal Component")
+plt.ylabel("Second Principal Component")
+plt.title("PCA Projection of Iris Dataset")
+plt.colorbar()
+plt.show()

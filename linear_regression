@@ -1,0 +1,64 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# Load dataset
+file_path = "/content/Food-Truck(For Linear Regression Program).csv"
+df = pd.read_csv(file_path, header=None)
+df.columns = ["Population", "Profit"]
+
+# Extract values
+X = df["Population"].values
+y = df["Profit"].values
+n = len(X)  # Number of data points
+
+# Scatter plot
+plt.figure(figsize=(6, 4))
+plt.scatter(X, y, alpha=0.7)
+plt.xlabel("Population (in 10,000s)")
+plt.ylabel("Profit (in $10,000s)")
+plt.title("Scatter Plot of Population vs. Profit")
+plt.show()
+
+# Compute means
+X_mean = sum(X) / n
+y_mean = sum(y) / n
+
+# Compute slope (b1) and intercept (b0) manually
+num = sum((X - X_mean) * (y - y_mean))  # Numerator for b1
+den = sum((X - X_mean) ** 2)  # Denominator for b1
+b1 = num / den
+b0 = y_mean - (b1 * X_mean)
+
+# Compute predictions
+y_pred = np.array([b0 + b1 * x for x in X])
+
+# Compute Cost Function (Mean Squared Error / 2)
+cost = sum((y - y_pred) ** 2) / (n)
+
+
+# Compute SSE, SSR, SST manually
+SSE = sum((y - y_pred) ** 2)  # Sum of Squared Errors
+SSR = sum((y_pred - y_mean) ** 2)  # Regression Sum of Squares
+SST = sum((y - y_mean) ** 2)  # Total Sum of Squares
+R2 = SSR / SST  # R-squared
+
+
+# Print results
+print(f"Intercept (b0): {b0}, Slope (b1): {b1}")
+print(f"Cost: {cost}")
+print(f"SSE: {SSE}")
+print(f"SSR: {SSR}")
+print(f"SST: {SST}")
+print(f"R2 Score: {R2}")
+
+# Scatter plot
+plt.figure(figsize=(6, 4))
+plt.scatter(X, y, alpha=0.7)
+plt.plot(X,y_pred, color="red", label="Regression Line")
+plt.xlabel("Population (in 10,000s)")
+plt.ylabel("Profit (in $10,000s)")
+plt.title("Scatter Plot of Population vs. Profit")
+plt.show()
+
+

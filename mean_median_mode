@@ -1,0 +1,76 @@
+# Data
+x = [115.3, 195.5, 120.5, 110.2, 90.4, 105.6, 110.9, 116.3, 122.3, 125.4, 90.4]
+
+# Mean
+mean = sum(x) / len(x)
+print("Calculated mean manually:", mean)
+
+import statistics
+print("Calculated mean using statistics module:", statistics.mean(x))
+
+# Sort for median and mode calculation
+x.sort()
+print("Sorted list:", x)
+
+# Median
+n = len(x)
+if n % 2 == 0:
+    median1 = x[n // 2]
+    median2 = x[n // 2 - 1]
+    median = (median1 + median2) / 2
+else:
+    median = x[n // 2]
+print("Median is:", median)
+
+print("Median using statistics module:", statistics.median(x))
+
+# Mode
+frequency = {}
+for value in x:
+    frequency[value] = frequency.get(value, 0) + 1
+print("Frequencies:", frequency)
+
+frequencs = list(frequency.values())
+print("Frequencies only:", frequencs)
+
+most_frequent = max(frequencs)
+print("Highest frequency:", most_frequent)
+
+modes = [key for key, value in frequency.items() if value == most_frequent]
+print("Mode(s):", modes)
+
+print("Mode using statistics module:", statistics.mode(x))
+
+# Variance and Standard Deviation
+variance = sum((i - mean) ** 2 for i in x) / (n - 1)
+print("Variance calculated manually:", variance)
+
+print("Variance using statistics module:", statistics.variance(x))
+
+standarddev = variance ** 0.5
+print("Standard Deviation calculated manually:", standarddev)
+
+print("Standard Deviation using statistics module:", statistics.stdev(x))
+
+# Min-Max Normalization
+import numpy as np
+
+max_val = np.max(x)
+min_val = np.min(x)
+
+scaled_arr = np.array([(i - min_val) / (max_val - min_val) for i in x])
+print("Min-Max Scaled array:", scaled_arr)
+
+# Standardization using Z-score
+X = [115.3, 195.5, 120.5, 110.2, 90.4, 105.6, 110.9, 116.3, 122.3, 125.4, 90.4]
+
+for i in range(len(X)):
+    X[i] = (X[i] - statistics.mean(X)) / statistics.stdev(X)
+
+# Redefine X for another standardization example
+X = [115.3, 195.5, 120.5, 110.2, 90.4, 105.6, 110.9, 116.3, 122.3, 125.4, 90.4]
+
+stand_arr = np.array([(i - statistics.mean(X)) / statistics.stdev(X) for i in X])
+print("Standardized (Z-score) array:", stand_arr)
+
+print("Mean of standardized array (should be close to 0):", round(statistics.mean(stand_arr), 2))

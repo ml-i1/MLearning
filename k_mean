@@ -1,0 +1,35 @@
+import numpy as np
+from sklearn.cluster import KMeans
+import matplotlib.pyplot as plt
+
+# Data points
+X = np.array([[5.9, 3.2], [4.6, 2.9], [6.2, 2.8], [4.7, 3.2],
+              [5.5, 4.2], [5.0, 3.0], [4.9, 3.1], [6.7, 3.1]])
+
+# Initial centers
+init_centers = np.array([[6.2, 3.2], [5.6, 3.7], [6.3, 3.0]])
+
+# Function to run KMeans for specified iterations
+def run_kmeans(n_iter):
+    model = KMeans(n_clusters=3, init=init_centers, n_init=1, max_iter=n_iter, random_state=42)
+    model.fit(X)
+    return model.cluster_centers_
+
+# Get centers at different stages
+centers_1 = run_kmeans(1)    # After 1 iteration
+centers_2 = run_kmeans(2)    # After 2 iterations
+final_model = KMeans(n_clusters=3, init=init_centers, n_init=1, random_state=42).fit(X)
+centers_final = final_model.cluster_centers_
+
+# Print required centers
+print("Red center after 1st iteration:", centers_1[0])
+print("Green center after 2nd iteration:", centers_2[1])
+print("Blue center after convergence:", centers_final[2])
+print("Iterations to converge:", final_model.n_iter_)
+
+# Plotting
+plt.scatter(*X.T, c=final_model.labels_, cmap='viridis', label='Points')
+plt.scatter(*centers_final.T, c='red', marker='X', s=200, label='Centers')
+plt.title("K-Means Clustering")
+plt.legend()
+plt.show()

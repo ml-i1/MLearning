@@ -1,0 +1,68 @@
+import numpy as np
+import pandas as pd
+from sklearn.datasets import load_iris
+from sklearn.impute import SimpleImputer
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import accuracy_score
+
+# Load Iris dataset
+iris = load_iris()
+X = pd.DataFrame(iris.data, columns=iris.feature_names)
+y = iris.target
+
+# Introduce NaNs intentionally
+X.iloc[5:10, 2] = np.nan
+X.iloc[20:25, 1] = np.nan
+
+# Impute missing values using mean
+imputer = SimpleImputer(strategy='mean')
+X_imputed = imputer.fit_transform(X)
+
+# Standardize the features
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X_imputed)
+
+# Softmax function
+def softmax(z):
+    e_z = np.exp(z - np.max(z, axis=1, keepdims=True))
+    return e_z / e_z.sum(axis=1, keepdims=True)
+
+# One-hot encoding
+def one_hot(y, num_classes):
+    return np.eye(num_classes)[y]
+
+# Logistic regression training using gradient descent
+def train_logistic_regression(X, y, num_classes, lr=0.1, epochs=1000):
+    m, n = X.shape
+    X = np.hstack([np.ones((m, 1)), X])  # Add bias term
+    W = np.zeros((n + 1, num_classes))
+    Y = one_hot(y, num_classes)
+
+    for epoch in range(epochs):
+        logits = np.dot(X, W)
+        probs = softmax(logits)
+        loss = -np.mean(np.sum(Y * np.log(probs + 1e-9), axis=1))
+        grad = np.dot(X.T, (probs - Y)) / m
+        W -= lr * grad
+
+        if epoch % 100 == 0:
+            print(f"Epoch {epoch} | Loss: {loss:.4f}")
+
+    return W
+
+# Prediction function
+def predict(X, W):
+    m = X.shape[0]
+    X = np.hstack([np.ones((m, 1)), X])
+    logits = np.dot(X, W)
+    return np.argmax(softmax(logits), axis=1)
+
+# Number of classes
+num_classes = len(np.unique(y))
+
+# Train model
+W = train_logistic_regression(X_scaled, y, num_classes)
+
+# Predict and evaluate
+y_pred = predict(X_scaled, W)
+print("\nAccuracy:", accuracy_score(y, y_pred))
